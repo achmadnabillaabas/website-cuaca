@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Forecast — Berita Cuaca</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/forecast.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+  <div class="container" role="main">
+    <header>
+      <h1>Berita Cuaca — Forecast</h1>
+      <div class="searchbar" role="search" aria-label="Pencarian lokasi">
+        <input id="searchInput" placeholder="Cari kota (mis. Jakarta) atau lat,lon" aria-label="Cari lokasi"/>
+        <button id="searchBtn" class="btn">Cari</button>
+        <button id="locBtn" class="btn secondary">Gunakan Lokasiku</button>
+      </div>
+      <div class="controls">
+        <label class="meta" for="unitToggle">Unit</label>
+        <select id="unitToggle" aria-label="Pilih unit">
+          <option value="metric">°C • km/h</option>
+          <option value="imperial">°F • mph</option>
+        </select>
+      </div>
+    </header>
+
+    <section class="hero card" aria-labelledby="heroTitle">
+      <div class="hero-left">
+        <div id="locName" class="loc">Jakarta, Indonesia</div>
+        <div id="updateTime" class="updated">Memuat...</div>
+        <div class="temp-row">
+          <div>
+            <div id="tempNow" class="temp-now">--°</div>
+            <div id="condNow" class="cond">--</div>
+          </div>
+          <div style="flex:1"></div>
+          <div style="text-align:right">
+            <div id="weatherIcon" class="icon-xx" aria-hidden="true">☀️</div>
+            <div class="stats" id="miniStats">
+              <div class="stat" id="statFeels">Feels: --°</div>
+              <div class="stat" id="statWind">Wind: --</div>
+              <div class="stat" id="statHum">Humidity: --%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="grid">
+      <div>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <strong>Forecast Menu</strong>
+            <div class="meta">Data: Open-Meteo • Radar: RainViewer</div>
+          </div>
+
+          <div class="tabs" id="tabList" role="tablist" aria-label="Menu Forecast">
+            <button class="tab active" data-tab="current">Current</button>
+            <button class="tab" data-tab="hourly">Hourly</button>
+            <button class="tab" data-tab="daily">Daily</button>
+            <button class="tab" data-tab="radar">Radar</button>
+            <button class="tab" data-tab="wind">Wind Map</button>
+            <button class="tab" data-tab="clouds">Clouds</button>
+            <button class="tab" data-tab="sunmoon">Sun & Moon</button>
+            <button class="tab" data-tab="rain">Rain & Precip</button>
+            <button class="tab" data-tab="air">Air Quality</button>
+            <button class="tab" data-tab="charts">Charts</button>
+            <button class="tab" data-tab="alerts">Alerts</button>
+            <button class="tab" data-tab="activity">Activity Planner</button>
+            <button class="tab" data-tab="compare">Compare</button>
+            <button class="tab" data-tab="debug">Debug</button>
+          </div>
+
+          <div class="panel" id="panels">
+            <div class="panel-item" id="panel-current" role="tabpanel">
+              <div class="meta">Ringkasan sekarang</div>
+              <div id="currentDetails" style="margin-top:10px"></div>
+            </div>
+
+            <div class="panel-item" id="panel-hourly" role="tabpanel" hidden>
+              <canvas id="hourChart"></canvas>
+            </div>
+
+            <div class="panel-item" id="panel-daily" role="tabpanel" hidden>
+              <div class="daily-list" id="dailyList"></div>
+            </div>
+
+            <div class="panel-item" id="panel-radar" role="tabpanel" hidden>
+              <div id="radarNote" class="meta">Gunakan timeline untuk melihat frame radar.</div>
+              <div style="margin-top:8px">
+                <div id="radarMap" style="height:300px;border-radius:8px;overflow:hidden"></div>
+              </div>
+              <div class="radar-timeline">
+                <button id="radarPlay" class="btn">Play</button>
+                <input id="radarSlider" class="slider" type="range" min="0" max="0" value="0" />
+                <div id="radarFrameTime" class="meta" style="min-width:160px;text-align:right"></div>
+              </div>
+            </div>
+
+            <div class="panel-item" id="panel-wind" role="tabpanel" hidden>
+              <div class="meta">Peta angin dan preview</div>
+              <div id="windMap" style="height:300px;border-radius:8px;overflow:hidden;margin-top:10px"></div>
+            </div>
+
+            <div class="panel-item" id="panel-clouds" role="tabpanel" hidden>
+              <div class="meta">Tutup awan (%)</div>
+              <div id="cloudsPreview" style="height:180px;margin-top:8px"></div>
+            </div>
+
+            <div class="panel-item" id="panel-sunmoon" role="tabpanel" hidden>
+              <div class="meta">Sunrise / Sunset / Moon phase</div>
+              <div style="margin-top:10px" id="sunmoon"></div>
+            </div>
+
+            <div class="panel-item" id="panel-rain" role="tabpanel" hidden>
+              <div class="meta">Probabilitas & akumulasi hujan</div>
+              <div id="rainInfo" style="margin-top:10px"></div>
+            </div>
+
+            <div class="panel-item" id="panel-air" role="tabpanel" hidden>
+              <div class="meta">Air Quality (placeholder)</div>
+              <div id="airInfo" style="margin-top:10px"></div>
+            </div>
+
+            <div class="panel-item" id="panel-charts" role="tabpanel" hidden>
+              <div class="meta">Grafik & analitik</div>
+              <canvas id="multiChart" style="margin-top:8px"></canvas>
+            </div>
+
+            <div class="panel-item" id="panel-alerts" role="tabpanel" hidden>
+              <div id="alertsList" style="margin-top:8px"></div>
+            </div>
+
+            <div class="panel-item" id="panel-activity" role="tabpanel" hidden>
+              <div id="activityAdvice" style="margin-top:8px"></div>
+            </div>
+
+            <div class="panel-item" id="panel-compare" role="tabpanel" hidden>
+              <div class="meta">Bandingkan dengan lokasi lain</div>
+              <div style="display:flex;gap:8px;margin-top:8px">
+                <input id="compareInput" placeholder="Ketik kota untuk bandingkan"/>
+                <button id="compareBtn" class="btn">Bandingkan</button>
+              </div>
+              <div id="compareResult" style="margin-top:12px"></div>
+            </div>
+
+            <div class="panel-item" id="panel-debug" role="tabpanel" hidden>
+              <pre id="rawJson" style="white-space:pre-wrap;max-height:260px;overflow:auto;background:#f7f7f7;padding:10px;border-radius:8px"></pre>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px" class="card">
+          <strong>7 Hari (ringkasan)</strong>
+          <div id="mini7" style="margin-top:8px"></div>
+        </div>
+      </div>
+
+      <aside>
+        <div class="card">
+          <strong>Peta Satelit & Radar</strong>
+          <div id="map" style="margin-top:8px;height:300px"></div>
+
+          <div class="map-controls">
+            <button id="toggleRadar" class="btn secondary">Toggle Radar</button>
+            <button id="centerBtn" class="btn">Center</button>
+            <div style="flex:1"></div>
+            <button id="copyRaw" class="btn">Copy JSON</button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <strong>Tips Cuaca</strong>
+          <div id="tips" class="advice"></div>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <strong>Debug / Source</strong>
+          <div class="meta" style="margin-top:8px">Provider: Open-Meteo (forecast). Radar frames: RainViewer (public).</div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="footer">Built for tugas — palet warna: #EDF1D6 • #9DC08B • #609966 • #40513B</div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

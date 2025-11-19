@@ -1,0 +1,25 @@
+/* forecast.css - page specific */
+.hero{display:flex;gap:18px;align-items:center;padding:18px;background:linear-gradient(90deg,#ffffff,rgba(255,255,255,0.85));border-radius:12px;box-shadow:0 6px 18px rgba(64,81,59,0.08);margin-top:14px}
+.hero-left{flex:1}
+.loc{font-size:20px;font-weight:700}
+.updated{color:var(--muted);font-size:13px;margin-top:4px}
+.temp-row{display:flex;align-items:baseline;gap:12px;margin-top:8px}
+.temp-now{font-size:64px;font-weight:800;color:var(--accent-3);line-height:1}
+.cond{font-weight:600;color:var(--muted);margin-top:6px}
+.stats{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+.stat{background:var(--card);padding:8px 10px;border-radius:10px;box-shadow:0 3px 8px rgba(64,81,59,0.04);font-size:13px}
+.grid{display:grid;grid-template-columns:1fr 360px;gap:16px;margin-top:14px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{padding:8px 10px;border-radius:10px;background:transparent;border:1px solid transparent;cursor:pointer;font-weight:600}
+.tab.active{background:linear-gradient(180deg,var(--accent-1),var(--accent-2));color:white}
+.panel{margin-top:12px}
+#hourChart{height:220px;display:block;width:100%}
+.daily-list{display:flex;gap:8px;overflow:auto;padding:8px 2px}
+.day{min-width:110px;padding:10px;border-radius:10px;text-align:center;background:linear-gradient(180deg,#fff,#fbfff0);box-shadow:0 3px 10px rgba(64,81,59,0.04)}
+.day .date{font-weight:700}
+.day .temp{margin-top:8px;font-weight:700}
+#map{height:320px;border-radius:8px}
+.radar-timeline{display:flex;gap:8px;align-items:center;margin-top:8px}
+.slider{flex:1}
+.icon-xx{font-size:42px}
+@media (max-width:980px){.grid{grid-template-columns:1fr}.hero{flex-direction:column;align-items:flex-start}.temp-now{font-size:48px}#map{height:260px}}
