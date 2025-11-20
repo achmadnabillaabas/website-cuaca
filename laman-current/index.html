@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Current Weather</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="overlay"></div>
+    <main class="app">
+      <section class="search-section">
+        <form id="searchForm">
+          <input
+            type="text"
+            id="cityInput"
+            placeholder="Search city…"
+            aria-label="Search city"
+            required
+          />
+          <button type="submit">Search</button>
+        </form>
+        <p id="errorMessage" class="error-message" role="alert"></p>
+        <p id="infoMessage" class="info-message" aria-live="polite"></p>
+      </section>
+
+      <section class="weather-card" id="weatherCard" hidden>
+        <div class="weather-header">
+          <div>
+            <h1 id="cityName">City, Country</h1>
+            <p id="localTime">--/--/----, --:--:-- --</p>
+          </div>
+          <img id="weatherIcon" src="" alt="Weather icon" />
+        </div>
+
+        <div class="temperature">
+          <p id="temperature">--°C</p>
+          <p id="weatherDescription">Description</p>
+          <small id="feelsLike">Feels like --°C</small>
+        </div>
+
+        <div class="stats-grid">
+          <article class="stat-card">
+            <span class="stat-icon">💧</span>
+            <p>Humidity</p>
+            <strong id="humidity">--%</strong>
+          </article>
+          <article class="stat-card">
+            <span class="stat-icon">🌬️</span>
+            <p>Wind</p>
+            <strong id="wind">-- km/h</strong>
+          </article>
+          <article class="stat-card">
+            <span class="stat-icon">📊</span>
+            <p>Pressure</p>
+            <strong id="pressure">-- hPa</strong>
+          </article>
+          <article class="stat-card">
+            <span class="stat-icon">🌅</span>
+            <p>Sunrise</p>
+            <strong id="sunrise">--:-- --</strong>
+          </article>
+          <article class="stat-card">
+            <span class="stat-icon">🌇</span>
+            <p>Sunset</p>
+            <strong id="sunset">--:-- --</strong>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
