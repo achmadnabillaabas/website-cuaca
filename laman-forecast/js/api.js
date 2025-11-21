@@ -20,10 +20,11 @@ const api = (function(){
     if(cache[key] && cache[key].expires > Date.now()) return cache[key].data;
     const hourly = ['temperature_2m','apparent_temperature','precipitation','weathercode','windspeed_10m','relativehumidity_2m'].join(',');
     const daily = ['weathercode','temperature_2m_max','temperature_2m_min','sunrise','sunset','precipitation_sum'].join(',');
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=${hourly}&daily=${daily}&timezone=auto`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=${hourly}&daily=${daily}&timezone=auto&forecast_days=16`;
     const res = await fetch(url);
     if(!res.ok) throw new Error('Gagal mengambil data cuaca');
     const js = await res.json();
+    console.log('API Response - Daily days:', js.daily?.time?.length, 'Hourly hours:', js.hourly?.time?.length);
     cache[key] = {data: js, expires: ttl(1000*60*7)}; // cache 7 minutes
     return js;
   }
@@ -36,5 +37,25 @@ const api = (function(){
     return frames;
   }
 
-  return {geocode, fetchForecast, loadRadarFrames};
+  async function reverseGeocode(lat, lon){
+    try{
+      const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&accept-language=id`;
+      const res = await fetch(url);
+      if(res.ok){
+        const data = await res.json();
+        const addr = data.address;
+        if(addr){
+          const city = addr.city || addr.town || addr.county;
+          const state = addr.state;
+          const country = addr.country;
+          if(city && state) return `${city}, ${state}, ${country}`;
+          if(city) return `${city}, ${country}`;
+        }
+        if(data.display_name) return data.display_name.split(',').slice(0,3).join(', ');
+      }
+    }catch(e){console.error(e);}
+    return `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+  }
+
+  return {geocode, fetchForecast, loadRadarFrames, reverseGeocode};
 })();
