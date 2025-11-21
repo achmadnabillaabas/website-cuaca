@@ -1,0 +1,31 @@
+/* style.css - global theme and layout */
+:root{
+  --bg: #EDF1D6;
+  --accent-1: #9DC08B;
+  --accent-2: #609966;
+  --accent-3: #40513B;
+  --card: #ffffff;
+  --muted: rgba(64,81,59,0.72);
+  --shadow: 0 6px 18px rgba(64,81,59,0.08);
+  --radius: 12px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;background:linear-gradient(180deg,var(--bg),#f6f7ef);color:var(--accent-3)}
+.container{max-width:1100px;margin:20px auto;padding:18px}
+header{display:flex;gap:12px;align-items:center}
+.searchbar{display:flex;gap:8px;align-items:center;margin-left:12px;flex:1}
+.searchbar input{flex:1;padding:10px 12px;border-radius:10px;border:1px solid rgba(64,81,59,0.08);background:rgba(255,255,255,0.9)}
+.btn{background:var(--accent-1);color:white;padding:9px 12px;border-radius:10px;border:0;cursor:pointer;font-weight:600;transition:all 0.2s ease;box-shadow:0 2px 6px rgba(157,192,139,0.3)}
+.btn:hover{background:var(--accent-2);transform:translateY(-1px);box-shadow:0 4px 10px rgba(157,192,139,0.4)}
+.btn:active{transform:translateY(0);box-shadow:0 2px 4px rgba(157,192,139,0.3)}
+.btn.secondary{background:var(--accent-2)}
+.btn.secondary:hover{background:var(--accent-3)}
+.controls{display:flex;gap:8px;align-items:center}
+.controls label{font-size:14px;font-weight:600;color:var(--accent-3)}
+.controls select{padding:8px 32px 8px 12px;border-radius:10px;border:2px solid rgba(157,192,139,0.4);background:linear-gradient(135deg,rgba(237,241,214,0.6),rgba(255,255,255,0.9));backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:var(--accent-3);font-size:14px;font-weight:600;cursor:pointer;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);box-shadow:0 2px 6px rgba(96,153,102,0.12);appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23609966' d='M6 9L1 4h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.controls select:hover{border-color:var(--accent-2);box-shadow:0 3px 8px rgba(96,153,102,0.18);background:linear-gradient(135deg,rgba(237,241,214,0.8),rgba(255,255,255,1))}
+.controls select:focus{outline:none;border-color:var(--accent-2);box-shadow:0 0 0 3px rgba(157,192,139,0.2)}
+.card{background:var(--card);padding:12px;border-radius:10px;box-shadow:var(--shadow)}
+.meta{font-size:13px;color:var(--muted)}
+.footer{margin-top:16px;font-size:13px;color:var(--muted);text-align:center}

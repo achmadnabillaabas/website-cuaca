@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Forecast — Berita Cuaca</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/forecast.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+  <div class="container" role="main">
+    <header>
+      <h1>Berita Cuaca — Forecast</h1>
+      <div class="searchbar" role="search" aria-label="Pencarian lokasi">
+        <input id="searchInput" placeholder="Cari kota (mis. Jakarta) atau lat,lon" aria-label="Cari lokasi"/>
+        <button id="searchBtn" class="btn">Cari</button>
+        <button id="locBtn" class="btn secondary">Gunakan Lokasiku</button>
+      </div>
+      <div class="controls">
+        <label class="meta" for="unitToggle">Unit</label>
+        <select id="unitToggle" aria-label="Pilih unit">
+          <option value="metric">°C • km/h</option>
+          <option value="imperial">°F • mph</option>
+        </select>
+      </div>
+    </header>
+
+    <section class="hero card" aria-labelledby="heroTitle">
+      <div class="hero-left">
+        <div id="locName" class="loc">Jakarta, Indonesia</div>
+        <div id="updateTime" class="updated">Memuat...</div>
+        <div class="temp-row">
+          <div style="flex:1">
+            <div id="tempNow" class="temp-now">--°</div>
+            <div id="condNow" class="cond">--</div>
+            <div id="weatherAdvice" class="weather-advice">Memuat kondisi cuaca...</div>
+          </div>
+          <div id="weatherIcon" class="icon-xx" aria-hidden="true">☀️</div>
+          <div class="stats" id="miniStats">
+            <div class="stat" id="statFeels">Feels: --°</div>
+            <div class="stat" id="statWind">Wind: --</div>
+            <div class="stat" id="statHum">Humidity: --%</div>
+          </div>
+        </div>
+        <div id="hourlyPreview" class="hourly-preview"></div>
+      </div>
+    </section>
+
+    <div class="grid">
+      <div>
+        <!-- Ramalan 10 Hari -->
+        <div class="card forecast-10day">
+          <div class="card-header-row">
+            <div class="card-icon-small">📅</div>
+            <strong>RAMALAN 10 HARI</strong>
+          </div>
+          <div id="forecast10Days" class="forecast-days-list"></div>
+        </div>
+
+        <!-- Weather Info Cards Grid -->
+        <div class="weather-cards-grid" style="margin-top:16px">
+          <!-- Presipitasi Card -->
+          <div class="weather-info-card" id="precipCard">
+            <div class="card-header">
+              <div class="card-icon precipitation-icon">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" fill="currentColor" opacity="0.3"/>
+                  <circle cx="12" cy="16" r="1.5" fill="currentColor" class="drop drop-1"/>
+                  <circle cx="9" cy="19" r="1.2" fill="currentColor" class="drop drop-2"/>
+                  <circle cx="15" cy="19" r="1.2" fill="currentColor" class="drop drop-3"/>
+                </svg>
+              </div>
+              <span class="card-label">PRESIPITASI</span>
+            </div>
+            <div class="card-content">
+              <div id="precipMap" class="mini-map"></div>
+            </div>
+          </div>
+
+          <!-- Terasa Seperti Card -->
+          <div class="weather-info-card" id="feelsLikeCard">
+            <div class="card-header">
+              <div class="card-icon feels-icon">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2" class="pulse"/>
+                  <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <span class="card-label">TERASA SEPERTI</span>
+            </div>
+            <div class="card-content">
+              <div class="big-value" id="feelsLikeTemp">--°</div>
+              <div class="card-description" id="feelsLikeDesc">Memuat...</div>
+            </div>
+          </div>
+
+          <!-- Indeks UV Card -->
+          <div class="weather-info-card" id="uvCard">
+            <div class="card-header">
+              <div class="card-icon uv-icon">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="12" cy="12" r="4" fill="currentColor" class="sun-core"/>
+                  <g class="sun-rays">
+                    <line x1="12" y1="1" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="1" y1="12" x2="3" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="21" y1="12" x2="23" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </g>
+                </svg>
+              </div>
+              <span class="card-label">INDEKS UV</span>
+            </div>
+            <div class="card-content">
+              <div class="big-value" id="uvIndex">--</div>
+              <div class="uv-bar">
+                <div class="uv-bar-fill" id="uvBarFill"></div>
+              </div>
+              <div class="card-description" id="uvDesc">Memuat...</div>
+            </div>
+          </div>
+
+          <!-- Angin Card -->
+          <div class="weather-info-card" id="windCard">
+            <div class="card-header">
+              <div class="card-icon wind-icon">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M9.59 4.59A2 2 0 1 1 11 8H2M12.59 1.59A2 2 0 1 1 14 5H2M8 12h12a2 2 0 1 1 0 4H8M6 16h2" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="wind-line"/>
+                </svg>
+              </div>
+              <span class="card-label">ANGIN</span>
+            </div>
+            <div class="card-content">
+              <div class="wind-compass" id="windCompass">
+                <div class="compass-arrow" id="compassArrow"></div>
+                <div class="compass-center"></div>
+              </div>
+              <div class="wind-info">
+                <div class="wind-label" id="windLabel">Angin</div>
+                <div class="wind-speed" id="windSpeed">-- m/dtk</div>
+                <div class="wind-direction" id="windDirection">--</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Peta Satelit & Radar Card -->
+        <div class="map-card" style="margin-top:16px">
+          <div class="map-card-header">
+            <div class="map-card-icon">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z" fill="currentColor" opacity="0.3"/>
+                <circle cx="12" cy="12" r="3" fill="currentColor" class="radar-pulse"/>
+                <circle cx="12" cy="12" r="6" stroke="currentColor" stroke-width="1" opacity="0.5" class="radar-ring"/>
+                <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1" opacity="0.3" class="radar-ring"/>
+              </svg>
+            </div>
+            <span class="map-card-label">PETA SATELIT & RADAR</span>
+          </div>
+          <div class="map-card-content">
+            <div id="map" class="satellite-map"></div>
+            <div class="map-overlay-info">
+              <div class="location-marker">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="white" stroke="currentColor" stroke-width="2"/>
+                  <circle cx="12" cy="9" r="2.5" fill="currentColor"/>
+                </svg>
+                <span id="mapLocationName">Lokasi Saya</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Info Cards Grid -->
+        <div class="info-cards-grid" style="margin-top:16px">
+          <!-- Tips Cuaca Card -->
+          <div class="info-card tips-card">
+            <div class="info-card-header">
+              <h3 class="info-card-title">Tips Cuaca</h3>
+            </div>
+            <div class="info-card-content">
+              <div id="tips" class="tips-text">Cuaca aman untuk aktivitas luar.</div>
+            </div>
+          </div>
+
+          <!-- Debug / Source Card -->
+          <div class="info-card debug-card">
+            <div class="info-card-header">
+              <h3 class="info-card-title">Debug / Source</h3>
+            </div>
+            <div class="info-card-content">
+              <div class="debug-text">Provider: Open-Meteo (forecast). Radar frames: RainViewer (public).</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside>
+    </div>
+
+    <div class="footer">Built for tugas — palet warna: #EDF1D6 • #9DC08B • #609966 • #40513B</div>
+  </div>
+
+  <script src="js/api.js?v=2"></script>
+  <script src="js/map.js?v=2"></script>
+  <script src="js/charts.js?v=2"></script>
+  <script src="js/ui.js?v=2"></script>
+  <script src="js/main.js?v=2"></script>
+</body>
+</html>

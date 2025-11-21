@@ -1,0 +1,176 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  font-family: "Poppins", sans-serif;
+  color: #fff;
+  background-image: url("assets/images/rainy-garden.jpg.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(244, 244, 212, 0.8) 0%,
+    rgba(165, 193, 137, 0.7) 35%,
+    rgba(94, 153, 99, 0.65) 70%,
+    rgba(59, 79, 53, 0.8) 100%
+  );
+  z-index: -1;
+}
+
+.app {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.search-section form {
+  display: flex;
+  gap: 0.75rem;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  padding: 0.35rem;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.search-section input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-size: 1rem;
+  padding: 0.75rem 1.25rem;
+  outline: none;
+}
+
+.search-section input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.search-section button {
+  border: none;
+  padding: 0.75rem 1.75rem;
+  border-radius: 999px;
+  background: #2ecc71;
+  color: #0b2b1b;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-section button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(46, 204, 113, 0.4);
+}
+
+.error-message {
+  margin-top: 0.75rem;
+  color: #ffe082;
+  min-height: 1.2em;
+}
+
+.info-message {
+  margin-top: 0.25rem;
+  color: rgba(255, 255, 255, 0.85);
+  min-height: 1.2em;
+  font-size: 0.95rem;
+}
+
+.weather-card {
+  padding: 2.5rem;
+  border-radius: 35px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.weather-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.weather-header img {
+  width: 110px;
+  height: 110px;
+}
+
+.temperature {
+  text-align: center;
+}
+
+.temperature p:first-child {
+  font-size: 4.5rem;
+  font-weight: 600;
+}
+
+.temperature p:nth-child(2) {
+  font-size: 1.25rem;
+  text-transform: capitalize;
+}
+
+.temperature small {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 1rem;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  text-align: center;
+  min-height: 140px;
+}
+
+.stat-icon {
+  font-size: 1.75rem;
+}
+
+@media (max-width: 600px) {
+  .app {
+    padding: 2rem 1rem 3rem;
+  }
+
+  .weather-card {
+    padding: 1.75rem;
+    border-radius: 25px;
+  }
+
+  .weather-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .temperature p:first-child {
+    font-size: 3.2rem;
+  }
+}

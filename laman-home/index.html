@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home | Weather App</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="logo">WeatherApp</div>
+    <ul class="nav-menu">
+      <li><a href="../home/index.html" class="active">Home</a></li>
+      <li><a href="../current/index.html">Current</a></li>
+      <li><a href="../forecast/index.html">Forecast</a></li>
+      <li><a href="../about/index.html">About</a></li>
+    </ul>
+  </nav>
+
+  <!-- HEADER (TANGGAL + JUDUL) -->
+  <header class="header">
+    <p id="dateNow"></p>
+    <h1>Cuaca Saat Ini</h1>
+  </header>
+
+  <!-- WARNING ALERT MIRIP BMKG -->
+  <section class="alert-section">
+    <div class="alert-icon">!</div>
+    <div class="alert-content">
+      <h3>Peringatan Dini Cuaca Indonesia</h3>
+      <p id="alertText">
+        Contoh: Berpotensi terjadi hujan sedang hingga lebat disertai petir
+        dan angin kencang di beberapa wilayah. (Teks ini bisa kamu ganti sendiri.)
+      </p>
+      <a href="#" class="alert-link">Selengkapnya →</a>
+    </div>
+  </section>
+
+  <!-- SLIDER CUACA IBU KOTA PROVINSI -->
+  <section class="cities-section">
+    <div class="cities-header">
+      <h2>Cuaca Ibu Kota Provinsi</h2>
+      <div class="slider-buttons">
+        <button id="btnPrev" class="slider-btn">‹</button>
+        <button id="btnNext" class="slider-btn">›</button>
+      </div>
+    </div>
+
+    <div class="cities-wrapper" id="citiesWrapper">
+      <div class="cities-container" id="cityCards">
+        <!-- card kota akan di-inject dari script.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- AKSES INFORMASI LAINNYA -->
+  <section class="info-section">
+    <h2>Akses Informasi Lainnya</h2>
+
+    <div class="info-grid">
+      <a class="info-card" href="../current/index.html">
+        <img src="../../assets/icons/weather.png" alt="">
+        <span>Cuaca Hari Ini</span>
+      </a>
+
+      <a class="info-card" href="../forecast/index.html">
+        <img src="../../assets/icons/forecast.png" alt="">
+        <span>Prakiraan Cuaca</span>
+      </a>
+
+      <a class="info-card" href="../about/index.html">
+        <img src="../../assets/icons/info.png" alt="">
+        <span>Tentang Kami</span>
+      </a>
+
+      <a class="info-card" href="#">
+        <img src="../../assets/icons/location.png" alt="">
+        <span>Lokasi Anda</span>
+      </a>
+    </div>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>
