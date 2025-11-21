@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — Aplikasi Cuaca</title>
+
+  <!-- CSS Section About -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <section class="about-section">
+
+    <div class="about-section__card">
+      
+      <!-- ======= GAMBAR PROFIL / TIM ======= -->
+      <div class="about-section__hero">
+        <!-- TODO: ganti gambar ini ke file mu sendiri -->
+        <img src="team.png" alt="Tim Website Cuaca" class="about-section__img">
+      </div>
+
+      <!-- ======= KONTEN ABOUT ======= -->
+      <div class="about-section__content">
+
+        <h2 class="about-section__title">Aplikasi Perkiraan Cuaca — Deskripsi Proyek</h2>
+        <p class="about-section__lead">
+          Aplikasi Perkiraan Cuaca ini merupakan proyek kolaboratif yang dikerjakan oleh <strong>Kelompok 3</strong>
+          sebagai bagian dari tugas pembuatan aplikasi web. Proyek ini bertujuan untuk menyediakan informasi cuaca
+          secara real time dan perkiraan hingga beberapa hari ke depan dengan tampilan antarmuka yang sederhana,
+          informatif, dan mudah diakses oleh pengguna.
+        </p>
+        <p class="about-section__text">
+          Melalui proyek ini, kami belajar bagaimana memanfaatkan API publik, mengelola struktur halaman web yang
+          modular, serta bekerja bersama dalam satu repository menggunakan GitHub. Setiap anggota memiliki peran dan
+          tanggung jawab tertentu pada bagian halaman yang berbeda, namun tetap berkolaborasi untuk menciptakan satu
+          sistem yang terintegrasi.
+        </p>
+
+        <h3 class="about-section__subtitle">👥 Anggota Tim & Pembagian Tugas</h3>
+        <ul class="about-section__list">
+          <li><strong>🧑‍💻 Anggota 1 — Halaman Home</strong><br> Bertanggung jawab merancang tampilan awal website, navigasi utama, dan penyambutan pengguna. Halaman Home dibuat agar mudah digunakan dan menjadi pintu masuk ke fitur-fitur utama aplikasi.</li>
+          <li><strong>🧑‍💻 Anggota 2 — Halaman About</strong><br> Mengelola bagian informasi mengenai proyek, dokumentasi, penjelasan fitur, serta memastikan pengguna memahami tujuan serta cara kerja aplikasi secara umum.</li>
+          <li><strong>🧑‍💻 Anggota 3 — Halaman Forecast (Perkiraan Cuaca)</strong><br> Membangun fitur tampilan cuaca 5 hari ke depan dengan memanfaatkan API. Menampilkan suhu, kondisi cuaca, dan perubahan cuaca harian secara jelas dan mudah dibaca pengguna.</li>
+          <li><strong>🧑‍💻 Anggota 4 — Halaman Current Weather (Cuaca Saat Ini)</strong><br> Mengambil dan menampilkan data cuaca terkini seperti suhu, kelembapan, kondisi langit, dan lain-lain menggunakan API. Halaman ini menjadi fitur penting untuk informasi real-time.</li>
+        </ul>
+
+        <h3 class="about-section__subtitle">🛠️ Teknologi yang Digunakan</h3>
+        <p class="about-section__text">Aplikasi ini dikembangkan menggunakan teknologi web standar yang sederhana namun efektif:</p>
+        <h3 class="about-section__subtitle">Frontend</h3>
+        <ul class="about-section__list">
+          <li>HTML5 — Struktur konten halaman</li>
+          <li>CSS3 — Styling, layout, dan tampilan</li>
+          <li>JavaScript (ES Modules) — Logika, interaksi, dan pengambilan data API</li>
+        </ul>
+        <h3 class="about-section__subtitle">API & Data</h3>
+        <p class="about-section__text">
+          Sumber data cuaca menggunakan <a href="https://openweathermap.org" target="_blank" rel="noopener">OpenWeatherMap API</a>,
+          yaitu layanan pengambil data cuaca lengkap dan dapat diakses secara publik. Data yang digunakan mencakup:
+        </p>
+        <ul class="about-section__list">
+          <li>Suhu</li>
+          <li>Kelembapan</li>
+          <li>Kondisi cuaca (cerah, hujan, berawan, dll.)</li>
+          <li>Perkiraan cuaca harian</li>
+        </ul>
+        <h3 class="about-section__subtitle">Version Control</h3>
+        <ul class="about-section__list">
+          <li>Git</li>
+          <li>GitHub (repository publik) untuk kolaborasi, versioning, dan pull request antar anggota.</li>
+        </ul>
+
+        <h3 class="about-section__subtitle">🎯 Tujuan Pengembangan</h3>
+        <ul class="about-section__list">
+          <li>Mengimplementasikan konsep API pada aplikasi web</li>
+          <li>Mengembangkan struktur folder modular</li>
+          <li>Penggunaan Git dan GitHub dalam kerja kelompok</li>
+          <li>Perancangan UI/UX sederhana namun terarah</li>
+          <li>Pembagian tugas efektif sesuai kompetensi</li>
+          <li>Penyelesaian proyek secara kolaboratif secara profesional</li>
+        </ul>
+
+        <h3 class="about-section__subtitle">🚀 Hasil Akhir</h3>
+        <ul class="about-section__list">
+          <li>Informasi cuaca saat ini</li>
+          <li>Perkiraan cuaca 5 hari</li>
+          <li>Tampilan antarmuka yang konsisten di setiap halaman</li>
+          <li>Navigasi sederhana dan responsif</li>
+          <li>Struktur website yang mudah dikembangkan lebih lanjut</li>
+        </ul>
+        <p class="about-section__text">Proyek ini juga menjadi pengalaman berharga dalam bekerja sebagai tim developer kecil dan berkolaborasi dalam sistem versioning yang sebenarnya.</p>
+
+        <div class="about-section__actions">
+          <button id="about-back-home" class="about-section__btn">Kembali ke Home</button>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- JS Section About -->
+  <script type="module" src="script.js"></script>
+</body>
+</html>
