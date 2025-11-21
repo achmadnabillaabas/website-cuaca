@@ -4,14 +4,14 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Aplikasi Perkiraan Cuaca - Kelompok</title>
-  <link rel="stylesheet" href="main.css">
+  <link rel="stylesheet" href="main.css?v=2">
 </head>
 <body>
   <header class="main-header">
     <h1 class="main-header__title">Aplikasi Cuaca Kelompok</h1>
     <nav class="main-nav">
       <button data-section="home" class="main-nav__btn">Home</button>
-      <a href="sections/about/index.html" class="main-nav__btn">About</a>
+      <button data-section="about" class="main-nav__btn">About</button>
       <button data-section="forecast" class="main-nav__btn">Perkiraan Cuaca</button>
       <button data-section="current" class="main-nav__btn">Cuaca Saat Ini</button>
     </nav>
@@ -22,8 +22,62 @@
   </main>
 
   <footer class="main-footer">
-    <small>Kelompok 4 - Proyek Perkiraan Cuaca</small>
+    <small>Kelompok 3 - Proyek Perkiraan Cuaca</small>
   </footer>
+
+  <template id="tpl-home">
+    <header class="header">
+      <p id="dateNow"></p>
+      <h1>Cuaca Saat Ini</h1>
+    </header>
+
+    <section class="alert-section">
+      <div class="alert-icon">!</div>
+      <div class="alert-content">
+        <h3>Peringatan Dini Cuaca Indonesia</h3>
+        <p id="alertText">
+          Contoh: Berpotensi terjadi hujan sedang hingga lebat disertai petir
+          dan angin kencang di beberapa wilayah.
+        </p>
+        <a href="#" class="alert-link">Selengkapnya →</a>
+      </div>
+    </section>
+
+    <section class="cities-section">
+      <div class="cities-header">
+        <h2>Cuaca Ibu Kota Provinsi</h2>
+        <div class="slider-buttons">
+          <button id="btnPrev" class="slider-btn">‹</button>
+          <button id="btnNext" class="slider-btn">›</button>
+        </div>
+      </div>
+      <div class="cities-wrapper" id="citiesWrapper">
+        <div class="cities-container" id="cityCards"></div>
+      </div>
+    </section>
+
+    <section class="info-section">
+      <h2>Akses Informasi Lainnya</h2>
+      <div class="info-grid">
+        <a class="info-card" href="../current/index.html">
+          <img src="sections/laman-forecast/assets/icons/sun.svg" alt="">
+          <span>Cuaca Hari Ini</span>
+        </a>
+        <a class="info-card" href="../forecast/index.html">
+          <img src="sections/laman-forecast/assets/icons/cloud.svg" alt="">
+          <span>Prakiraan Cuaca</span>
+        </a>
+        <a class="info-card" href="../about/index.html">
+          <img src="sections/laman-forecast/assets/icons/rain.svg" alt="">
+          <span>Tentang Kami</span>
+        </a>
+        <a class="info-card" href="#">
+          <img src="sections/laman-forecast/assets/icons/cloud.svg" alt="">
+          <span>Lokasi Anda</span>
+        </a>
+      </div>
+    </section>
+  </template>
 
   <script type="module" src="main.js"></script>
 </body>

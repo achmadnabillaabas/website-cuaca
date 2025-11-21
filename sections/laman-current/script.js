@@ -18,6 +18,7 @@ const windEl = document.getElementById("wind");
 const pressureEl = document.getElementById("pressure");
 const sunriseEl = document.getElementById("sunrise");
 const sunsetEl = document.getElementById("sunset");
+const useLocationBtn = document.getElementById("useLocationBtn");
 
 /**
  * Fetch current weather data from OpenWeatherMap API
@@ -45,6 +46,8 @@ async function requestWeather(url) {
       throw new Error(
         response.status === 404
           ? "City not found. Please try another name."
+          : response.status === 401
+          ? "Invalid API key. Please check your key."
           : "Failed to fetch weather data. Please try again."
       );
     }
@@ -158,6 +161,39 @@ function initAutoLocationWeather() {
       setInfo("Unable to detect your location. Please search manually.");
     }
   );
+}
+
+if (useLocationBtn) {
+  useLocationBtn.addEventListener("click", () => {
+    if (!navigator.geolocation) {
+      setInfo("Geolocation not supported. Please search for a city.");
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        if (!API_KEY || API_KEY === "YOUR_API_KEY_HERE") {
+          setInfo("Location detected. Set API key to show weather.");
+          return;
+        }
+        fetchWeatherByCoords(coords.latitude, coords.longitude);
+      },
+      () => {
+        setInfo("Permission denied. Allow location for current weather.");
+      }
+    );
+  });
+}
+
+if (navigator.permissions && navigator.permissions.query) {
+  try {
+    navigator.permissions.query({ name: "geolocation" }).then((res) => {
+      if (res.state === "denied") {
+        setInfo("Location permission blocked. Allow it in site settings.");
+      } else if (res.state === "prompt") {
+        setInfo("Click 'Use my location' to allow access.");
+      }
+    });
+  } catch (_) {}
 }
 
 window.addEventListener("load", initAutoLocationWeather);
