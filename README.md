@@ -1,5 +1,5 @@
 # website-cuaca
-Proyek ini adalah aplikasi web sederhana untuk menampilkan cuaca saat ini dan perkiraan cuaca beberapa hari ke depan menggunakan data dari OpenWeatherMap API. Aplikasi dibuat sebagai tugas proyek web dan dikembangkan secara kolaboratif oleh Kelompok 4.
+Proyek ini adalah aplikasi web sederhana untuk menampilkan cuaca saat ini dan perkiraan cuaca beberapa hari ke depan menggunakan data dari OpenWeatherMap API. Aplikasi dibuat sebagai tugas proyek web dan dikembangkan secara kolaboratif oleh Kelompok 3.
 
 👥 Anggota & Pembagian Tugas
 
