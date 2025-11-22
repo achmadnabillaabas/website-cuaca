@@ -44,7 +44,12 @@ function clearAssets() {
   });
   currentAssets.scripts.forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.remove();
+    if (el) {
+      el.remove();
+      // Also remove from DOM completely
+      const scripts = document.querySelectorAll(`script[id="${id}"]`);
+      scripts.forEach(s => s.remove());
+    }
   });
   currentAssets = { styles: [], scripts: [] };
 }
@@ -69,9 +74,15 @@ function injectStyles(urls) {
 function injectScripts(urls) {
   return Promise.all(urls.map(url => new Promise((resolve, reject) => {
     const id = idFor('dyn-script-', url);
-    if (document.getElementById(id)) return resolve();
+    
+    // Remove existing script with same ID first
+    const existing = document.getElementById(id);
+    if (existing) {
+      existing.remove();
+    }
+    
     const s = document.createElement('script');
-    s.src = url;
+    s.src = url + '?v=' + Date.now(); // Add cache buster
     s.id = id;
     s.onload = () => resolve();
     s.onerror = () => reject(new Error('Gagal memuat skrip: ' + url));
@@ -112,6 +123,44 @@ function postProcess(section, bodyEl) {
       btn.addEventListener('click', e => { e.preventDefault(); loadSection('home'); });
     }
   }
+  if (section === 'current') {
+    // Setup modal event listeners
+    const allowBtn = bodyEl.querySelector('#allowLocationBtn');
+    const denyBtn = bodyEl.querySelector('#denyLocationBtn');
+    const modal = bodyEl.querySelector('#locationModal');
+    
+    if (allowBtn) {
+      allowBtn.addEventListener('click', () => {
+        if (modal) modal.hidden = true;
+        const infoMsg = document.getElementById('infoMessage');
+        if (infoMsg) infoMsg.textContent = 'Detecting your location…';
+        
+        navigator.geolocation.getCurrentPosition(
+          ({ coords }) => {
+            if (infoMsg) infoMsg.textContent = 'Showing weather for your current location.';
+            if (typeof fetchWeatherByCoords === 'function') {
+              fetchWeatherByCoords(coords.latitude, coords.longitude);
+            }
+          },
+          (error) => {
+            if (error.code === error.PERMISSION_DENIED) {
+              if (infoMsg) infoMsg.textContent = 'Location permission denied. Please search manually or allow location in browser settings.';
+            } else {
+              if (infoMsg) infoMsg.textContent = 'Unable to detect your location. Please search manually.';
+            }
+          }
+        );
+      });
+    }
+    
+    if (denyBtn) {
+      denyBtn.addEventListener('click', () => {
+        if (modal) modal.hidden = true;
+        const infoMsg = document.getElementById('infoMessage');
+        if (infoMsg) infoMsg.textContent = 'You can search for a city manually or click "Use my location" anytime.';
+      });
+    }
+  }
 }
 
 async function loadSection(section) {
@@ -133,8 +182,36 @@ async function loadSection(section) {
   if (conf.scripts && conf.scripts.length) {
     await injectScripts(conf.scripts);
   }
-  if (section === 'current' && typeof initAutoLocationWeather === 'function') {
-    try { initAutoLocationWeather(); } catch (e) { /* noop */ }
+  if (section === 'current') {
+    // Check location permission and show modal if needed
+    setTimeout(() => {
+      const modal = document.getElementById('locationModal');
+      if (!modal) return;
+      
+      if (navigator.permissions && navigator.permissions.query) {
+        navigator.permissions.query({ name: 'geolocation' }).then((result) => {
+          if (result.state === 'granted') {
+            // Already granted, call init function
+            if (typeof initAutoLocationWeather === 'function') {
+              try { initAutoLocationWeather(); } catch (e) { /* noop */ }
+            }
+          } else if (result.state === 'prompt') {
+            // Show modal
+            modal.hidden = false;
+          } else {
+            // Denied
+            const infoMsg = document.getElementById('infoMessage');
+            if (infoMsg) infoMsg.textContent = 'Location permission blocked. Allow it in site settings.';
+          }
+        }).catch(() => {
+          // Fallback: show modal
+          modal.hidden = false;
+        });
+      } else {
+        // No permissions API, show modal
+        modal.hidden = false;
+      }
+    }, 100);
   }
   setActiveNav(section);
 }

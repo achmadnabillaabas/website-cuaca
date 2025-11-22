@@ -14,6 +14,20 @@
   </head>
   <body>
     <div class="overlay"></div>
+    
+    <!-- Location Permission Modal -->
+    <div id="locationModal" class="location-modal" hidden>
+      <div class="location-modal-content">
+        <div class="location-icon">📍</div>
+        <h2>Akses Lokasi Diperlukan</h2>
+        <p>Izinkan aplikasi mengakses lokasi Anda untuk menampilkan cuaca saat ini di lokasi Anda.</p>
+        <div class="location-modal-actions">
+          <button id="allowLocationBtn" class="btn-primary">Izinkan Akses Lokasi</button>
+          <button id="denyLocationBtn" class="btn-secondary">Cari Manual</button>
+        </div>
+      </div>
+    </div>
+
     <main class="app">
       <section class="search-section">
         <form id="searchForm">

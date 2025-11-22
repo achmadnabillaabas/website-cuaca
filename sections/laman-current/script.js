@@ -1,199 +1,270 @@
-// Replace with your OpenWeatherMap API key
-const API_KEY = "9c9ed5165b89e5dcaa0daec33fa9638d";
+// Wrap in IIFE to avoid global scope pollution
+(function() {
+  // Replace with your OpenWeatherMap API key
+  const API_KEY = "9c9ed5165b89e5dcaa0daec33fa9638d";
 
-const form = document.getElementById("searchForm");
-const cityInput = document.getElementById("cityInput");
-const weatherCard = document.getElementById("weatherCard");
-const errorMessage = document.getElementById("errorMessage");
-const infoMessage = document.getElementById("infoMessage");
+  const form = document.getElementById("searchForm");
+  const cityInput = document.getElementById("cityInput");
+  const weatherCard = document.getElementById("weatherCard");
+  const errorMessage = document.getElementById("errorMessage");
+  const infoMessage = document.getElementById("infoMessage");
 
-const cityNameEl = document.getElementById("cityName");
-const localTimeEl = document.getElementById("localTime");
-const weatherIconEl = document.getElementById("weatherIcon");
-const temperatureEl = document.getElementById("temperature");
-const weatherDescriptionEl = document.getElementById("weatherDescription");
-const feelsLikeEl = document.getElementById("feelsLike");
-const humidityEl = document.getElementById("humidity");
-const windEl = document.getElementById("wind");
-const pressureEl = document.getElementById("pressure");
-const sunriseEl = document.getElementById("sunrise");
-const sunsetEl = document.getElementById("sunset");
-const useLocationBtn = document.getElementById("useLocationBtn");
+  const cityNameEl = document.getElementById("cityName");
+  const localTimeEl = document.getElementById("localTime");
+  const weatherIconEl = document.getElementById("weatherIcon");
+  const temperatureEl = document.getElementById("temperature");
+  const weatherDescriptionEl = document.getElementById("weatherDescription");
+  const feelsLikeEl = document.getElementById("feelsLike");
+  const humidityEl = document.getElementById("humidity");
+  const windEl = document.getElementById("wind");
+  const pressureEl = document.getElementById("pressure");
+  const sunriseEl = document.getElementById("sunrise");
+  const sunsetEl = document.getElementById("sunset");
+  const useLocationBtn = document.getElementById("useLocationBtn");
 
-/**
- * Fetch current weather data from OpenWeatherMap API
- */
-async function fetchWeather(city) {
-  const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(
-    city
-  )}&appid=${API_KEY}&units=metric`;
-  await requestWeather(url);
-}
+  /**
+   * Fetch current weather data from OpenWeatherMap API
+   */
+  async function fetchWeather(city) {
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(
+      city
+    )}&appid=${API_KEY}&units=metric`;
+    await requestWeather(url);
+  }
 
-/**
- * Fetch weather using geographic coordinates
- */
-async function fetchWeatherByCoords(lat, lon) {
-  const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
-  await requestWeather(url);
-}
+  /**
+   * Fetch weather using geographic coordinates
+   */
+  async function fetchWeatherByCoords(lat, lon) {
+    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
+    await requestWeather(url);
+  }
+  
+  // Make fetchWeatherByCoords available globally for main.js
+  window.fetchWeatherByCoords = fetchWeatherByCoords;
 
-async function requestWeather(url) {
-  try {
-    const response = await fetch(url);
+  async function requestWeather(url) {
+    try {
+      const response = await fetch(url);
 
-    if (!response.ok) {
-      throw new Error(
-        response.status === 404
-          ? "City not found. Please try another name."
-          : response.status === 401
-          ? "Invalid API key. Please check your key."
-          : "Failed to fetch weather data. Please try again."
-      );
+      if (!response.ok) {
+        throw new Error(
+          response.status === 404
+            ? "City not found. Please try another name."
+            : response.status === 401
+            ? "Invalid API key. Please check your key."
+            : "Failed to fetch weather data. Please try again."
+        );
+      }
+
+      const data = await response.json();
+      updateWeatherCard(data);
+    } catch (error) {
+      displayError(error.message);
+    }
+  }
+
+  /**
+   * Update the UI with weather data
+   */
+  function updateWeatherCard(data) {
+    const { name, sys, main, weather, wind, dt, timezone } = data;
+    const iconCode = weather[0]?.icon;
+
+    cityNameEl.textContent = `${name}, ${sys.country}`;
+    localTimeEl.textContent = formatLocalDateTime(dt, timezone);
+    weatherIconEl.src = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+    weatherIconEl.alt = weather[0]?.description ?? "Weather icon";
+    temperatureEl.textContent = `${main.temp.toFixed(1)}°C`;
+    weatherDescriptionEl.textContent = weather[0]?.description ?? "";
+    feelsLikeEl.textContent = `Feels like ${main.feels_like.toFixed(2)}°C`;
+
+    humidityEl.textContent = `${main.humidity}%`;
+    windEl.textContent = `${(wind.speed * 3.6).toFixed(1)} km/h`;
+    pressureEl.textContent = `${main.pressure} hPa`;
+    sunriseEl.textContent = formatTime(sys.sunrise, timezone);
+    sunsetEl.textContent = formatTime(sys.sunset, timezone);
+
+    errorMessage.textContent = "";
+    weatherCard.hidden = false;
+  }
+
+  /**
+   * Format local date & time string based on timezone offset
+   */
+  function formatLocalDateTime(timestamp, timezoneOffset) {
+    const localMillis = (timestamp + timezoneOffset) * 1000;
+    return new Date(localMillis).toLocaleString(undefined, {
+      hour12: true,
+      timeZone: "UTC",
+    });
+  }
+
+  /**
+   * Format sunrise/sunset time in HH:MM AM/PM
+   */
+  function formatTime(timestamp, timezoneOffset) {
+    const localMillis = (timestamp + timezoneOffset) * 1000;
+    return new Date(localMillis).toLocaleTimeString(undefined, {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+      timeZone: "UTC",
+    });
+  }
+
+  /**
+   * Display error message neatly below the search bar
+   */
+  function displayError(message) {
+    errorMessage.textContent = message;
+    weatherCard.hidden = true;
+  }
+
+  function setInfo(message) {
+    if (infoMessage) {
+      infoMessage.textContent = message;
+    }
+  }
+
+  // Handle form submit + enter key
+  if (form) {
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const city = cityInput.value.trim();
+
+      if (!API_KEY || API_KEY === "YOUR_API_KEY_HERE") {
+        displayError("Please set your API key inside script.js.");
+        return;
+      }
+
+      if (!city) {
+        displayError("Please enter a city name.");
+        return;
+      }
+
+      fetchWeather(city);
+    });
+  }
+
+  function initAutoLocationWeather() {
+    if (!API_KEY || API_KEY === "YOUR_API_KEY_HERE") {
+      setInfo("Set your OpenWeatherMap API key to enable auto-location.");
+      return;
     }
 
-    const data = await response.json();
-    updateWeatherCard(data);
-  } catch (error) {
-    displayError(error.message);
-  }
-}
-
-/**
- * Update the UI with weather data
- */
-function updateWeatherCard(data) {
-  const { name, sys, main, weather, wind, dt, timezone } = data;
-  const iconCode = weather[0]?.icon;
-
-  cityNameEl.textContent = `${name}, ${sys.country}`;
-  localTimeEl.textContent = formatLocalDateTime(dt, timezone);
-  weatherIconEl.src = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
-  weatherIconEl.alt = weather[0]?.description ?? "Weather icon";
-  temperatureEl.textContent = `${main.temp.toFixed(1)}°C`;
-  weatherDescriptionEl.textContent = weather[0]?.description ?? "";
-  feelsLikeEl.textContent = `Feels like ${main.feels_like.toFixed(2)}°C`;
-
-  humidityEl.textContent = `${main.humidity}%`;
-  windEl.textContent = `${(wind.speed * 3.6).toFixed(1)} km/h`;
-  pressureEl.textContent = `${main.pressure} hPa`;
-  sunriseEl.textContent = formatTime(sys.sunrise, timezone);
-  sunsetEl.textContent = formatTime(sys.sunset, timezone);
-
-  errorMessage.textContent = "";
-  weatherCard.hidden = false;
-}
-
-/**
- * Format local date & time string based on timezone offset
- */
-function formatLocalDateTime(timestamp, timezoneOffset) {
-  const localMillis = (timestamp + timezoneOffset) * 1000;
-  return new Date(localMillis).toLocaleString(undefined, {
-    hour12: true,
-    timeZone: "UTC",
-  });
-}
-
-/**
- * Format sunrise/sunset time in HH:MM AM/PM
- */
-function formatTime(timestamp, timezoneOffset) {
-  const localMillis = (timestamp + timezoneOffset) * 1000;
-  return new Date(localMillis).toLocaleTimeString(undefined, {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true,
-    timeZone: "UTC",
-  });
-}
-
-/**
- * Display error message neatly below the search bar
- */
-function displayError(message) {
-  errorMessage.textContent = message;
-  weatherCard.hidden = true;
-}
-
-function setInfo(message) {
-  if (infoMessage) {
-    infoMessage.textContent = message;
-  }
-}
-
-// Handle form submit + enter key
-form.addEventListener("submit", (event) => {
-  event.preventDefault();
-  const city = cityInput.value.trim();
-
-  if (!API_KEY || API_KEY === "YOUR_API_KEY_HERE") {
-    displayError("Please set your API key inside script.js.");
-    return;
-  }
-
-  if (!city) {
-    displayError("Please enter a city name.");
-    return;
-  }
-
-  fetchWeather(city);
-});
-
-function initAutoLocationWeather() {
-  if (!API_KEY || API_KEY === "YOUR_API_KEY_HERE") {
-    setInfo("Set your OpenWeatherMap API key to enable auto-location.");
-    return;
-  }
-
-  if (!navigator.geolocation) {
-    setInfo("Geolocation not supported. Please search for a city.");
-    return;
-  }
-
-  setInfo("Detecting your location…");
-  navigator.geolocation.getCurrentPosition(
-    ({ coords }) => {
-      setInfo("Showing weather for your current location.");
-      fetchWeatherByCoords(coords.latitude, coords.longitude);
-    },
-    () => {
-      setInfo("Unable to detect your location. Please search manually.");
-    }
-  );
-}
-
-if (useLocationBtn) {
-  useLocationBtn.addEventListener("click", () => {
     if (!navigator.geolocation) {
       setInfo("Geolocation not supported. Please search for a city.");
       return;
     }
-    navigator.geolocation.getCurrentPosition(
-      ({ coords }) => {
-        if (!API_KEY || API_KEY === "YOUR_API_KEY_HERE") {
-          setInfo("Location detected. Set API key to show weather.");
-          return;
+
+    // Check if permission was already granted
+    if (navigator.permissions && navigator.permissions.query) {
+      navigator.permissions.query({ name: "geolocation" }).then((result) => {
+        if (result.state === "granted") {
+          // Already granted, fetch weather directly
+          setInfo("Detecting your location…");
+          navigator.geolocation.getCurrentPosition(
+            ({ coords }) => {
+              setInfo("Showing weather for your current location.");
+              fetchWeatherByCoords(coords.latitude, coords.longitude);
+            },
+            () => {
+              setInfo("Unable to detect your location. Please search manually.");
+            }
+          );
+        } else if (result.state === "prompt") {
+          // Show modal to request permission
+          showLocationModal();
+        } else {
+          // Permission denied
+          setInfo("Location permission blocked. Allow it in site settings.");
         }
-        fetchWeatherByCoords(coords.latitude, coords.longitude);
-      },
-      () => {
-        setInfo("Permission denied. Allow location for current weather.");
-      }
-    );
-  });
-}
+      }).catch(() => {
+        // Fallback if permissions API not supported
+        showLocationModal();
+      });
+    } else {
+      // Fallback for browsers without permissions API
+      showLocationModal();
+    }
+  }
 
-if (navigator.permissions && navigator.permissions.query) {
-  try {
-    navigator.permissions.query({ name: "geolocation" }).then((res) => {
-      if (res.state === "denied") {
-        setInfo("Location permission blocked. Allow it in site settings.");
-      } else if (res.state === "prompt") {
-        setInfo("Click 'Use my location' to allow access.");
+  function showLocationModal() {
+    const modal = document.getElementById("locationModal");
+    if (modal) {
+      modal.hidden = false;
+    }
+  }
+
+  function hideLocationModal() {
+    const modal = document.getElementById("locationModal");
+    if (modal) {
+      modal.hidden = true;
+    }
+  }
+
+  if (useLocationBtn) {
+    useLocationBtn.addEventListener("click", () => {
+      if (!navigator.geolocation) {
+        setInfo("Geolocation not supported. Please search for a city.");
+        return;
       }
+      navigator.geolocation.getCurrentPosition(
+        ({ coords }) => {
+          if (!API_KEY || API_KEY === "YOUR_API_KEY_HERE") {
+            setInfo("Location detected. Set API key to show weather.");
+            return;
+          }
+          fetchWeatherByCoords(coords.latitude, coords.longitude);
+        },
+        () => {
+          setInfo("Permission denied. Allow location for current weather.");
+        }
+      );
     });
-  } catch (_) {}
-}
+  }
 
-window.addEventListener("load", initAutoLocationWeather);
+  // Handle modal buttons
+  const allowLocationBtn = document.getElementById("allowLocationBtn");
+  const denyLocationBtn = document.getElementById("denyLocationBtn");
+
+  if (allowLocationBtn) {
+    allowLocationBtn.addEventListener("click", () => {
+      hideLocationModal();
+      setInfo("Detecting your location…");
+      navigator.geolocation.getCurrentPosition(
+        ({ coords }) => {
+          setInfo("Showing weather for your current location.");
+          fetchWeatherByCoords(coords.latitude, coords.longitude);
+        },
+        (error) => {
+          if (error.code === error.PERMISSION_DENIED) {
+            setInfo("Location permission denied. Please search manually or allow location in browser settings.");
+          } else {
+            setInfo("Unable to detect your location. Please search manually.");
+          }
+        }
+      );
+    });
+  }
+
+  if (denyLocationBtn) {
+    denyLocationBtn.addEventListener("click", () => {
+      hideLocationModal();
+      setInfo("You can search for a city manually or click 'Use my location' anytime.");
+    });
+  }
+
+  // Make initAutoLocationWeather available globally
+  window.initAutoLocationWeather = initAutoLocationWeather;
+
+  // Auto-init when loaded standalone
+  if (document.readyState === 'loading') {
+    window.addEventListener("load", initAutoLocationWeather);
+  } else {
+    // Already loaded, call immediately
+    initAutoLocationWeather();
+  }
+
+})(); // End of IIFE
